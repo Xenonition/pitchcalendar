@@ -1,0 +1,3 @@
+streamlit
+streamlit-calendar
+st-supabase-connection
