@@ -39,6 +39,7 @@ if 'eventClick' in calendar.keys():
             link = st.text_input("Update Documentation Link")
             submitted = st.form_submit_button("Submit")
             if submitted:
-                with st.spinner('Inserting Report into Database'):
-                    data, count = conn.table("pitches").update({'status':status, 'count':count, 'feedback':feedback, 'link':link}).eq('id', calendar['eventClick']['event']['id']).execute()
-
+                data, count = conn.table("pitches").update({'status':status, 'count':count, 'feedback':feedback, 'link':link}).eq('id', calendar['eventClick']['event']['id']).execute()
+        if st.button("Delete"):
+                conn.table("pitches").delete().eq('id', calendar['eventClick']['event']['id']).execute()
+                st.rerun()
