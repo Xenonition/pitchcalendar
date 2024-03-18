@@ -7,7 +7,7 @@ import pandas as pd
 #with st.spinner('Inserting Report into Database...'):
 
 conn = st.connection("supabase",type=SupabaseConnection)
-rows = conn.query("*", table="pitches", ttl="10m").execute().data
+rows = conn.query("*", table="pitches", ttl="0").execute().data
 to_download = rows
 
 for row in rows:
@@ -23,7 +23,22 @@ if 'eventClick' in calendar.keys():
 
     st.write('Feedback: ')
     st.write(pitch_selected['feedback'])
+
     try:
         st.page_link(pitch_selected['link'], label="Drive Link", icon="💾")
     except:
         st.write("No Valid Link Provided")
+
+    with st.expander("Update Data"):
+        with st.form("new_pitch", border=False):
+            status = st.selectbox(
+            'Update Pitch Status',
+            ('TBD', 'In Progress', 'Completed'))
+            count = st.number_input("Update Audience Count", value=0, step=1, min_value=0)
+            feedback = st.text_area("Update Feedback")
+            link = st.text_input("Update Documentation Link")
+            submitted = st.form_submit_button("Submit")
+            if submitted:
+                with st.spinner('Inserting Report into Database'):
+                    data, count = conn.table("pitches").update({'status':status, 'count':count, 'feedback':feedback, 'link':link}).eq('id', calendar['eventClick']['event']['id']).execute()
+
